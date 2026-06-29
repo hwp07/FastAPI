@@ -1,0 +1,7 @@
+# Danh sách thư viện mẫu và phiên bản
+
+fastapi == 0.100.0
+uvicorn == 0.20.0
+
+# Sau này nếu đồng nghiệp cùng 1 dự án muốn lấy các cấu hình thư viện kèm version
+# pip install -r requirements.txt
