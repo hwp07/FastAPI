@@ -53,62 +53,55 @@ database = [
     },
 ]
 
-
 @app.get("/books/statistics")
-def get_statistic_books():
-    cnt_available = 0
-    cnt_borrow = 0
-    for i in database:
-        if i["is_available"] is True:
-            cnt_available += 1
+def get_statistics():
+    available_books = 0
+    borrowed_books = 0
+
+    for book in database:
+        if book["is_available"]:
+            available_books += 1
         else:
-            cnt_borrow += 1
+            borrowed_books += 1
 
-        return {
-            "total_books": len(database),
-            "available_books": cnt_available,
-            "borrowed_books": cnt_borrow,
-        }
+    return {
+        "total_books": len(database),
+        "available_books": available_books,
+        "borrowed_books": borrowed_books,
+    }
 
-
-# tạo 1 mảng rỗng duyệt qua danh sách check xem có thuộc mảng rỗng ko không thuộc thì nó cho vào mảng rỗng thế là chỉ lấy mỗi cái 1 lần duy nhất tại có rồi nó sẽ ko thêm nx
 @app.get("/books/categories")
-def get_catergory_book():
-    list = []
-    for i in database:
-        if i["category"] not in list:
-            list.append(i)
+def get_categories():
+    categories = []
 
-    return {"catergory": list}
+    for book in database:
+        if book["category"] not in categories:
+            categories.append(book["category"])
 
+    return {
+        "total_categories": len(categories),
+        "categories": categories,
+    }
 
 @app.get("/books/latest")
-def get_max_books():
-    max = 0
-    for i in database:
-        if i["year"] > max:
-            max = i["year"]
-            a = i
-    return {"message": "Sách có năm lớn nhất", "data": a}
+def get_latest_book():
+    latest_book = database[0]
 
+    for book in database:
+        if book["year"] > latest_book["year"]:
+            latest_book = book
 
-# cách 2
-@app.get("/books/latest")
-def sort_database():
-    database.sort(lambda book: book["year"], reverse=True)
-    return database
+    return {
+        "message": "Sách mới nhất",
+        "data": latest_book,
+    }
 
+@app.get("/books/sort-desc")
+def sort_books_desc():
+    sorted_books = sorted(database,key=lambda book: book["year"],reverse=True)
+    return sorted_books
 
-# cách 3
-@app.get("/books/latest")
-def sort_databases():
-    database.sort(lambda book: -book["year"])
-    return database
-
-
-# cách 4
-@app.get("/books/latest")
-def sort_databasess():
-    database.sort(lambda book: book["year"])
-    database[::-1]
-    return database
+@app.get("/books/sort-asc")
+def sort_books_asc():
+    sorted_books = sorted(database,key=lambda book: book["year"])
+    return sorted_books
