@@ -1,9 +1,8 @@
-# lỗi:
-
-
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, status
 from pydantic import BaseModel
+
 app = FastAPI()
+
 products = [
     {
         "id": 1,
@@ -27,8 +26,15 @@ class ProductCreate(BaseModel):
     price: float
     stock: int
 
-@app.post("/products")
+@app.post("/products", status_code=status.HTTP_201_CREATED)
 def create_product(product: ProductCreate):
+    for i in products:
+        if i["code"] == product.code:
+            raise HTTPException(
+                status_code=400,
+                detail="Mã sản phẩm đã tồn tại"
+            )
+
     new_product = {
         "id": len(products) + 1,
         "code": product.code,
@@ -36,7 +42,9 @@ def create_product(product: ProductCreate):
         "price": product.price,
         "stock": product.stock
     }
+
     products.append(new_product)
+
     return {
         "message": "Create product successfully",
         "data": new_product
