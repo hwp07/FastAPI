@@ -22,7 +22,7 @@ products_db = [
 ]
 orders_db = []
 
-class OrderCreate:
+class OrderCreate(BaseModel):
     id: int
     stock: int
 

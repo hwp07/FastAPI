@@ -48,7 +48,7 @@ async def http_exception_handler(request: Request, exc: HTTPException):
     )
 
 
-@app.get(  "/promos/{code}",response_model=PromoPublic,status_code=status.HTTP_200_OK)
+@app.get("/promos/{code}",response_model=PromoPublic,status_code=status.HTTP_200_OK)
 def get_promo(code: str):
     promo = promo_codes_db.get(code)
 
