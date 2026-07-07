@@ -28,12 +28,6 @@ class TaskCreateSchema(BaseModel):
     assignee: str = Field(..., min_length=2)
     priority: int = Field(..., ge=1, le=5)
 
-    @field_validator('title')
-    @classmethod
-    def validate_title(cls, v):
-        if not v or not v.strip():
-            raise ValueError("Title cannot be empty")
-        return v.strip()
 
 class TaskPublicResponse(BaseModel):
     id: int
@@ -51,12 +45,6 @@ class TaskUpdateSchema(BaseModel):
     priority: Optional[int] = Field(None, ge=1, le=5)
     status: Optional[str] = None
 
-    @field_validator('status')
-    @classmethod
-    def validate_status(cls, v):
-        if v and v not in ["todo", "in_progress", "done"]:
-            raise ValueError("Invalid status")
-        return v
 
 @app.exception_handler(HTTPException)
 async def custom_http_exception_handler(request, exc: HTTPException):
