@@ -1,10 +1,12 @@
 # VIẾT API
 
 from fastapi import FastAPI, Depends, HTTPException, status
-from SS12.demo.database import SessionLocal, Base, engine
+from database import SessionLocal, Base, engine
 from sqlalchemy.orm import Session
-from SS12.demo.models import Product
-from SS12.demo.schemas import CreateProduct
+from models import Product
+from schemas import CreateProduct
+
+import services
 
 app = FastAPI()
 
@@ -28,7 +30,7 @@ def get_db():
 # Viết API lấy danh sách sản phẩm
 @app.get("/products")
 def get_product(db: Session = Depends(get_db)):
-    product = db.query(Product).all()
+    product = services.get_product(db)
 
     return {
         "message": "Lấy danh sách sản phẩm thành công",
@@ -38,7 +40,7 @@ def get_product(db: Session = Depends(get_db)):
 # Lấy chi tiết 1 sản phẩm
 @app.get("/products/{product_id}")
 def get_product_detail(product_id: int, db: Session = Depends(get_db)):
-    product = db.query(Product).filter(Product.id == product_id).first()
+    product = services.get_product_detail(product_id, db)
 
     if product is None:
         raise HTTPException(
@@ -54,10 +56,7 @@ def get_product_detail(product_id: int, db: Session = Depends(get_db)):
 # Viết API thêm sản phẩm
 @app.post("/products")
 def add_product(product: CreateProduct, db:Session = Depends(get_db)):
-    new_product = Product (
-        name = product.name,
-        price = product.price
-    )
+    new_product = services.add_product(product, db)
 
     db.add(new_product)
     db.commit()
@@ -72,16 +71,16 @@ def add_product(product: CreateProduct, db:Session = Depends(get_db)):
 # Viết API xóa sản phẩm
 @app.delete("/products/{product_id}")
 def del_product(product_id: int, db: Session = Depends(get_db)):
-    product = db.query(Product).filter(Product.id == product_id).first()
+    product = services.del_product(product_id, db)
 
-    if product is None:
-        raise HTTPException(
-            status_code=404,
-            detail="Sản phẩm không tồn tại"
-        )
+    # if product is None:
+    #     raise HTTPException(
+    #         status_code=404,
+    #         detail="Sản phẩm không tồn tại"
+    #     )
     
-    db.delete(product)
-    db.commit()
+    # db.delete(product)
+    # db.commit()
     return {
         "message": "Xóa sản phẩm thành công",
         "data": product
@@ -91,19 +90,19 @@ def del_product(product_id: int, db: Session = Depends(get_db)):
 # Viết API cập nhật
 @app.put("/product/{product_id}")
 def update_product(product_id: int,updateproduct: CreateProduct, db: Session = Depends(get_db)):
-    product = db.query(Product).filter(product_id == CreateProduct.id)
+    product = services.update_product(product_id, updateproduct, db)
 
-    if product is None:
-        raise HTTPException(
-            status_code=404,
-            detail="Không tìm thấy sản phẩm"
-        )
+    # if product is None:
+    #     raise HTTPException(
+    #         status_code=404,
+    #         detail="Không tìm thấy sản phẩm"
+    #     )
     
-    product.name = updateproduct.name
-    product.price = updateproduct.price
+    # product.name = updateproduct.name
+    # product.price = updateproduct.price
 
-    db.commit()
-    db.refresh(product)
+    # db.commit()
+    # db.refresh(product)
 
     return {
         "message": "Update thanh cong",

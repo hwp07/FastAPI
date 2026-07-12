@@ -1,6 +1,6 @@
 #  BANG THIET KE TRONG SQL
 from sqlalchemy import Column, Integer, String, Float
-from SS12.demo.database import Base
+from database import Base
 
 class Product(Base):
     __tablename__ = "Products"
