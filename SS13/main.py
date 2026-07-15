@@ -1,5 +1,5 @@
 from datetime import datetime
-from fastapi import FastAPI, Depends, Request
+from fastapi import FastAPI, HTTPException, Depends, Request
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from database import Base, engine, get_db
@@ -28,9 +28,6 @@ def response(
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
-
-    from fastapi import HTTPException
-
     if isinstance(exc, HTTPException):
         return JSONResponse(
             status_code=exc.status_code,

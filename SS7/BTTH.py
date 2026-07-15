@@ -1,5 +1,4 @@
 from datetime import datetime
-
 from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
@@ -20,18 +19,15 @@ promo_codes_db = {
         "is_active": False
     }
 }
-
 class PromoInternal(BaseModel):
     code: str
     discount_rate: float
     max_budget: int
     is_active: bool
 
-
 class PromoPublic(BaseModel):
     code: str
     discount_rate: float
-
 
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):
